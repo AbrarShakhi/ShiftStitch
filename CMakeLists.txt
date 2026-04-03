@@ -9,6 +9,7 @@ project(ShiftStitch
 # Options
 option(SHIFTSTITCH_BUILD_TESTS "Build tests" ON)
 option(SHIFTSTITCH_BUILD_EXAMPLES "Build examples" ON)
+option(SHIFTSTITCH_FETCH_OPENCV "Force download OpenCV" OFF)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -17,34 +18,38 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Position independent code (important for shared libs / Android)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# ---- OpenCV ----
-find_package(OpenCV QUIET)
+# -------------------------
+# OpenCV handling
+# -------------------------
 
-if(NOT OpenCV_FOUND)
-    message(STATUS "OpenCV not found, fetching...")
+# Android should NEVER fetch OpenCV
 
-    include(FetchContent)
+if(ANDROID)
+    message(STATUS "Android build detected")
+    message(STATUS "You must provide OpenCV_DIR manually")
 
-    FetchContent_Declare(
-        opencv
-        GIT_REPOSITORY https://github.com/opencv/opencv.git
-        GIT_TAG 4.x
-    )
+    find_package(OpenCV REQUIRED)
 
-    # Optional: reduce build size
-    set(BUILD_LIST core,imgproc,features2d,stitching CACHE STRING "" FORCE)
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-    set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
-    set(BUILD_PERF_TESTS OFF CACHE BOOL "" FORCE)
-    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+else()
+    find_package(OpenCV QUIET)
 
-    FetchContent_MakeAvailable(opencv)
-
-    set(OpenCV_LIBS opencv_core opencv_imgproc opencv_features2d opencv_stitching)
-    set(OpenCV_INCLUDE_DIRS ${opencv_SOURCE_DIR}/include)
+    if(NOT OpenCV_FOUND AND SHIFTSTITCH_FETCH_OPENCV)
+        message(STATUS "Fetching OpenCV (this may take a long time)...")
+        include(cmake/FetchOpenCV.cmake)
+        fetch_opencv()
+    elseif(NOT OpenCV_FOUND)
+        message(FATAL_ERROR
+            "OpenCV not found.\n"
+            "Install it OR enable downloading:\n"
+            "  -DSHIFTSTITCH_FETCH_OPENCV=ON"
+        )
+    endif()
 endif()
 
-# ---- Library ----
+# -------------------------
+# Library
+# -------------------------
+
 add_library(ShiftStitch SHARED
     src/shiftstitch.cpp
     src/panorama.cpp
@@ -66,7 +71,10 @@ target_compile_definitions(ShiftStitch
     PRIVATE SHIFTSTITCH_BUILD
 )
 
-# ---- Install ----
+# -------------------------
+# Install
+# -------------------------
+
 include(GNUInstallDirs)
 
 install(TARGETS ShiftStitch
@@ -86,13 +94,19 @@ install(EXPORT ShiftStitchTargets
     DESTINATION lib/cmake/ShiftStitch
 )
 
-# ---- Tests ----
+# -------------------------
+# Tests
+# -------------------------
+
 if(SHIFTSTITCH_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
-# ---- Examples ----
+# -------------------------
+# Examples
+# -------------------------
+
 if(SHIFTSTITCH_BUILD_EXAMPLES)
     add_executable(example_basic examples/basic_example.cpp)
     target_link_libraries(example_basic ShiftStitch)
