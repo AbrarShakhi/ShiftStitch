@@ -7,6 +7,7 @@ project(ShiftStitch
 )
 
 # Options
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(SHIFTSTITCH_BUILD_TESTS "Build tests" ON)
 option(SHIFTSTITCH_BUILD_EXAMPLES "Build examples" ON)
 option(SHIFTSTITCH_FETCH_OPENCV "Force download OpenCV" OFF)
@@ -57,7 +58,7 @@ add_library(ShiftStitch SHARED
 
 target_include_directories(ShiftStitch
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/shiftstitch>
         $<INSTALL_INTERFACE:include>
         ${OpenCV_INCLUDE_DIRS}
 )

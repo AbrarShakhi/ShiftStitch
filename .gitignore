@@ -1,2 +1,117 @@
-build
-__pycache__
+# ================================
+# Build directories and CMake
+# ================================
+/build/
+/_build/
+/cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+*.cbp
+*.sln
+*.vcxproj*
+*.xcodeproj
+*.xcworkspace
+*.opensdf
+*.sdf
+*.ipch
+*.pch
+
+# ================================
+# Libraries / dependencies
+# ================================
+/third_party/
+/_deps/
+/_external/
+/libs/
+/lib/
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
+
+# ================================
+# VSCode
+# ================================
+.vscode/
+*.code-workspace
+*.log
+
+# ================================
+# JetBrains CLion
+# ================================
+cmake-build-*/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ================================
+# Python
+# ================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+*.dylib
+*.dll
+
+# ================================
+# OS specific
+# ================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*~
+
+# Linux
+*~
+*.swp
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ================================
+# Logs
+# ================================
+*.log
+
+# ================================
+# Compiled binaries (optional)
+# ================================
+example_basic
+ShiftStitchTests
+*.exe
+*.out
+*.o
+*.obj
+*.pdb
+
+# ================================
+# Other temporary / backup files
+# ================================
+*.bak
+*.tmp
+*.orig
+*.rej
+
+# ================================
+# Generated documentation (optional)
+# ================================
+/docs/html/
+.cache
