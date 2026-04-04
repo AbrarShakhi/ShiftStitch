@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "shiftstitch/shiftstitch.hpp"
+#include "shiftstitch/sift.hpp"
 
 int main() {
 	std::vector<std::string> images_path = {
@@ -12,7 +13,9 @@ int main() {
 
 	shiftstitch::ShiftStitcher shiftstitch(images_path);
 
-	shiftstitch.createPanorama();
+	shiftstitch::SIFT siftAlgorithm;
+	shiftstitch.createPanorama(siftAlgorithm);
+
 	shiftstitch.savePanorama("output/panorama.jpg");
 
 	return EXIT_SUCCESS;

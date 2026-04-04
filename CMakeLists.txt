@@ -52,6 +52,7 @@ endif()
 # -------------------------
 add_library(ShiftStitch SHARED
     src/shiftstitch.cpp
+    src/sift.cpp
 )
 
 target_include_directories(ShiftStitch
