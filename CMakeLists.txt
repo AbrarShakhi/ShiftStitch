@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(ShiftStitch
     VERSION 1.0.0
-    DESCRIPTION "Panorama stitching library using shift algorithm"
+    DESCRIPTION "Panorama stitching library using SIFT algorithm"
     LANGUAGES CXX
 )
 
@@ -58,7 +58,7 @@ add_library(ShiftStitch SHARED
 
 target_include_directories(ShiftStitch
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/shiftstitch>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
         ${OpenCV_INCLUDE_DIRS}
 )

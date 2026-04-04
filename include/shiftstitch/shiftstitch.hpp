@@ -7,7 +7,7 @@ namespace shiftstitch {
 
 class ShiftStitcher {
 public:
-    cv::Mat createPanorama(const std::vector<cv::Mat>& images);
+  cv::Mat createPanorama(const std::vector<cv::Mat> &images);
 };
 
-}
+} // namespace shiftstitch
