@@ -8,7 +8,7 @@ cv::Mat shiftstitch::SIFT::stitch(std::vector<cv::Mat>& images) {
 		return cv::Mat();
 
 	cv::Mat result;
-	cv::hconcat(images, result);  // horizontal concatenation
+	cv::hconcat(images, result);
 
 	return result;
 }

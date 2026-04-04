@@ -109,6 +109,8 @@ ShiftStitchTests
 *.tmp
 *.orig
 *.rej
+input
+output
 
 # ================================
 # Generated documentation (optional)
