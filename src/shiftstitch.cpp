@@ -44,13 +44,8 @@ void shiftstitch::ShiftStitcher::createPanorama() {
 		throw std::runtime_error("No images loaded");
 	}
 
-	// Example: simple horizontal concatenation (placeholder logic)
-	panorama = images_mats[0];
-
-	for (size_t i = 1; i < images_mats.size(); ++i) {
-		cv::hconcat(panorama, images_mats[i], panorama);
-	}
-
+	// TODO: use SIFT algorith, to create panorama
+	panorama = cv::Mat();
 	panorama_created = true;
 }
 
