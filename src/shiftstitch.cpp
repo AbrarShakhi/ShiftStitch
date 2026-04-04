@@ -69,7 +69,7 @@ void shiftstitch::ShiftStitcher::savePanorama(std::string output_path) {
 	}
 
 	std::cout << "Writing to output: " << output_path << std::endl;
-
+	cv::cvtColor(panorama, panorama, cv::COLOR_RGB2BGR);
 	if (!cv::imwrite(output_path, panorama)) {
 		throw std::runtime_error("Failed to write panorama to file");
 	}
