@@ -6,25 +6,25 @@ project(ShiftStitch
     LANGUAGES CXX
 )
 
+# -------------------------
 # Options
+# -------------------------
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(SHIFTSTITCH_BUILD_TESTS "Build tests" ON)
 option(SHIFTSTITCH_BUILD_EXAMPLES "Build examples" ON)
 option(SHIFTSTITCH_FETCH_OPENCV "Force download OpenCV" OFF)
 
-# C++ standard
+# -------------------------
+# C++ config
+# -------------------------
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Position independent code (important for shared libs / Android)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # -------------------------
-# OpenCV handling
+# OpenCV
 # -------------------------
-
-# Android should NEVER fetch OpenCV
-
 if(ANDROID)
     message(STATUS "Android build detected")
     message(STATUS "You must provide OpenCV_DIR manually")
@@ -50,7 +50,6 @@ endif()
 # -------------------------
 # Library
 # -------------------------
-
 add_library(ShiftStitch SHARED
     src/shiftstitch.cpp
     src/panorama.cpp
@@ -73,9 +72,36 @@ target_compile_definitions(ShiftStitch
 )
 
 # -------------------------
+# Examples
+# -------------------------
+if(SHIFTSTITCH_BUILD_EXAMPLES)
+    add_executable(example_basic examples/basic_example.cpp)
+    target_link_libraries(example_basic ShiftStitch)
+
+    if(UNIX AND NOT APPLE)
+        set_target_properties(example_basic PROPERTIES
+            BUILD_RPATH "$ORIGIN"
+            INSTALL_RPATH "$ORIGIN"
+        )
+    elseif(APPLE)
+        set_target_properties(example_basic PROPERTIES
+            BUILD_RPATH "@loader_path"
+            INSTALL_RPATH "@loader_path"
+        )
+    endif()
+endif()
+
+# -------------------------
+# Tests
+# -------------------------
+if(SHIFTSTITCH_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+# -------------------------
 # Install
 # -------------------------
-
 include(GNUInstallDirs)
 
 install(TARGETS ShiftStitch
@@ -94,21 +120,3 @@ install(EXPORT ShiftStitchTargets
     NAMESPACE ShiftStitch::
     DESTINATION lib/cmake/ShiftStitch
 )
-
-# -------------------------
-# Tests
-# -------------------------
-
-if(SHIFTSTITCH_BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
-
-# -------------------------
-# Examples
-# -------------------------
-
-if(SHIFTSTITCH_BUILD_EXAMPLES)
-    add_executable(example_basic examples/basic_example.cpp)
-    target_link_libraries(example_basic ShiftStitch)
-endif()
