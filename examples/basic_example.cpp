@@ -1,15 +1,16 @@
-#include "shiftstitch/shiftstitch.hpp"
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+#include "shiftstitch/shiftstitch.hpp"
+
 int main() {
-  std::cout << "ShiftStitch example running!" << std::endl;
+	std::cout << "ShiftStitch example running!" << std::endl;
 
-  // Minimal test of your library
-  std::vector<cv::Mat> images;
-  shiftstitch::ShiftStitcher stitcher;
-  cv::Mat panorama = stitcher.createPanorama(images);
+	// Minimal test of your library
+	std::vector<cv::Mat> images;
+	shiftstitch::ShiftStitcher stitcher;
+	cv::Mat panorama = stitcher.createPanorama(images);
 
-  std::cout << "Panorama size: " << panorama.size() << std::endl;
-  return 0;
+	std::cout << "Panorama size: " << panorama.size() << std::endl;
+	return 0;
 }
