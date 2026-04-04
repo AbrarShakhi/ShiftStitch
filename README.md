@@ -198,7 +198,7 @@ sudo ldconfig
 
 ## License
 
-MIT License (or your chosen license)
+project is under [Apache License](./LICENSE)
 
 ---
 
