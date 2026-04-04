@@ -10,7 +10,8 @@ class ShiftStitcher {
    private:
 	std::vector<std::string> &images_paths;
 	std::vector<cv::Mat> images_mats;
-	bool isCreated;
+	cv::Mat panorama;
+	bool panorama_created;
 
    public:
 	ShiftStitcher(std::vector<std::string> &images_path);
@@ -18,7 +19,7 @@ class ShiftStitcher {
 
 	void createPanorama();
 	cv::Mat toCvMat();
-	void writePanorama(std::string output_path);
+	void savePanorama(std::string output_path);
 
    private:
 	std::vector<cv::Mat> loadImages();

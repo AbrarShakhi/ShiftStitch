@@ -13,7 +13,7 @@ int main() {
 	shiftstitch::ShiftStitcher shiftstitch(images_path);
 
 	shiftstitch.createPanorama();
-	shiftstitch.writePanorama("output/panorama.jpg");
+	shiftstitch.savePanorama("output/panorama.jpg");
 
 	return EXIT_SUCCESS;
 }

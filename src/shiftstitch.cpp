@@ -12,7 +12,7 @@
 
 shiftstitch::ShiftStitcher::ShiftStitcher(std::vector<std::string>& images_path)
     : images_paths(images_path) {
-	isCreated = false;
+	panorama_created = false;
 	images_mats = loadImages();
 }
 
@@ -30,7 +30,7 @@ std::vector<cv::Mat> shiftstitch::ShiftStitcher::loadImages() {
 
 		cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
 
-		images_mats.push_back(std::move(img));
+		images_mats.push_back(img);
 	}
 
 	return images_mats;
@@ -38,22 +38,39 @@ std::vector<cv::Mat> shiftstitch::ShiftStitcher::loadImages() {
 
 
 void shiftstitch::ShiftStitcher::createPanorama() {
-	std::cout << "creating Panorama" << std::endl;
-	isCreated = true;
+	std::cout << "Creating panorama..." << std::endl;
+
+	if (images_mats.empty()) {
+		throw std::runtime_error("No images loaded");
+	}
+
+	// Example: simple horizontal concatenation (placeholder logic)
+	panorama = images_mats[0];
+
+	for (size_t i = 1; i < images_mats.size(); ++i) {
+		cv::hconcat(panorama, images_mats[i], panorama);
+	}
+
+	panorama_created = true;
 }
 
 
 cv::Mat shiftstitch::ShiftStitcher::toCvMat() {
-	if (!isCreated) {
-		throw std::runtime_error("Panorama has not created yet");
+	if (!panorama_created) {
+		throw std::runtime_error("Panorama has not been created yet");
 	}
-	return cv::Mat();
+	return panorama;
 }
 
 
-void shiftstitch::ShiftStitcher::writePanorama(std::string output_path) {
-	if (!isCreated) {
-		throw std::runtime_error("Panorama has not created yet");
+void shiftstitch::ShiftStitcher::savePanorama(std::string output_path) {
+	if (!panorama_created) {
+		throw std::runtime_error("Panorama has not been created yet");
 	}
-	std::cout << "Writing to output" << std::endl;
+
+	std::cout << "Writing to output: " << output_path << std::endl;
+
+	if (!cv::imwrite(output_path, panorama)) {
+		throw std::runtime_error("Failed to write panorama to file");
+	}
 }
