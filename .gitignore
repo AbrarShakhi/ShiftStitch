@@ -109,8 +109,9 @@ ShiftStitchTests
 *.tmp
 *.orig
 *.rej
-input
-output
+*jpg
+*jpeg
+*.png
 
 # ================================
 # Generated documentation (optional)

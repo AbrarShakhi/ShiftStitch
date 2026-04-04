@@ -30,7 +30,7 @@ int main() {
 	SIFT siftAlgorithm;
 	shiftstitch.createPanorama(siftAlgorithm);
 
-	shiftstitch.savePanorama("output/panorama.jpg");
+	shiftstitch.savePanorama("output.jpg");
 
 	return EXIT_SUCCESS;
 }
