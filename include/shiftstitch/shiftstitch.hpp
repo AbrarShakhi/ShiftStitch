@@ -8,8 +8,8 @@ namespace shiftstitch {
 
 class ShiftStitcher {
    private:
-	std::vector<std::string> &images_path;
-	std::vector<cv::Mat> images_mat;
+	std::vector<std::string> &images_paths;
+	std::vector<cv::Mat> images_mats;
 	bool isCreated;
 
    public:
