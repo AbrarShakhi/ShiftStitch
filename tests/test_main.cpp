@@ -4,10 +4,8 @@
 
 int main() {
 	// Minimal test
-	std::vector<cv::Mat> images;
-	shiftstitch::ShiftStitcher stitcher;
-	auto result = stitcher.createPanorama(images);
+	std::vector<std::string> images_path = {};
 
-	assert(result.empty());  // placeholder assertion
+	shiftstitch::ShiftStitcher shiftstitch(images_path);
 	return 0;
 }

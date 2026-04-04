@@ -52,7 +52,6 @@ endif()
 # -------------------------
 add_library(ShiftStitch SHARED
     src/shiftstitch.cpp
-    src/panorama.cpp
 )
 
 target_include_directories(ShiftStitch
