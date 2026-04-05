@@ -10,18 +10,26 @@
 #include <vector>
 
 
-shiftstitch::ShiftStitcher::ShiftStitcher(std::vector<std::string>& images_path)
-    : images_paths(images_path) {
+shiftstitch::ShiftStitcher::ShiftStitcher(
+    std::vector<std::string>& images_paths) {
 	panorama_created = false;
-	images_mats = loadImages();
+	images_mats = loadImages(images_paths.begin(), images_paths.end());
+}
+
+shiftstitch::ShiftStitcher::ShiftStitcher(std::string images_paths[],
+                                          std::size_t size) {
+	panorama_created = false;
+	images_mats = loadImages(images_paths, images_paths + size);
 }
 
 
-std::vector<cv::Mat> shiftstitch::ShiftStitcher::loadImages() {
+template <typename It>
+std::vector<cv::Mat> shiftstitch::ShiftStitcher::loadImages(It first, It end) {
 	std::vector<cv::Mat> images_mats;
-	images_mats.reserve(images_paths.size());
 
-	for (const auto& impath : images_paths) {
+	for (auto it = first; it != end; ++it) {
+		const std::string& impath = *it;
+
 		cv::Mat img = cv::imread(impath);
 
 		if (img.empty()) {
@@ -37,15 +45,14 @@ std::vector<cv::Mat> shiftstitch::ShiftStitcher::loadImages() {
 }
 
 
-void shiftstitch::ShiftStitcher::createPanorama() {
+void shiftstitch::ShiftStitcher::createPanorama(ISticher& sticherAlgorithm) {
 	std::cout << "Creating panorama..." << std::endl;
 
 	if (images_mats.empty()) {
 		throw std::runtime_error("No images loaded");
 	}
 
-	// TODO: use SIFT algorith, to create panorama
-	panorama = cv::Mat();
+	panorama = sticherAlgorithm.stitch(images_mats);
 	panorama_created = true;
 }
 
