@@ -10,14 +10,12 @@
 #include <vector>
 
 
-shiftstitch::ShiftStitcher::ShiftStitcher(
-    std::vector<std::string>& images_paths) {
+shiftstitch::ShiftStitcher::ShiftStitcher(std::vector<std::string>& images_paths) {
 	panorama_created = false;
 	images_mats = loadImages(images_paths.begin(), images_paths.end());
 }
 
-shiftstitch::ShiftStitcher::ShiftStitcher(std::string images_paths[],
-                                          std::size_t size) {
+shiftstitch::ShiftStitcher::ShiftStitcher(std::string images_paths[], std::size_t size) {
 	panorama_created = false;
 	images_mats = loadImages(images_paths, images_paths + size);
 }
@@ -46,8 +44,6 @@ std::vector<cv::Mat> shiftstitch::ShiftStitcher::loadImages(It first, It end) {
 
 
 void shiftstitch::ShiftStitcher::createPanorama(ISticher& sticherAlgorithm) {
-	std::cout << "Creating panorama..." << std::endl;
-
 	if (images_mats.empty()) {
 		throw std::runtime_error("No images loaded");
 	}

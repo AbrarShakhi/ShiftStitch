@@ -10,23 +10,23 @@
 namespace shiftstitch {
 
 class ShiftStitcher {
-   private:
+private:
 	std::vector<cv::Mat> images_mats;
 	cv::Mat panorama;
 	bool panorama_created;
 
-   public:
-	ShiftStitcher(std::vector<std::string> &);
+public:
+	ShiftStitcher(std::vector<std::string>&);
 	ShiftStitcher(std::string[], std::size_t);
 	~ShiftStitcher() = default;
 
-	void createPanorama(ISticher &sticherAlgorithm);
+	void createPanorama(ISticher& sticherAlgorithm);
 
 
 	cv::Mat toCvMat();
 	void savePanorama(std::string);
 
-   private:
+private:
 	template <typename It>
 	std::vector<cv::Mat> loadImages(It, It);
 };
