@@ -1,32 +1,61 @@
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-Language                                  : Cpp
-BasedOnStyle                              : Google
-Standard                                  : Auto
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-# AccessModifierOffset                      : -4
-AlignTrailingComments                     : true
-# AllowAllParametersOfDeclarationOnNextLine : false
-# AllowShortBlocksOnASingleLine             : true
-# AllowShortFunctionsOnASingleLine          : true
-AllowShortIfStatementsOnASingleLine       : false
-AllowShortLoopsOnASingleLine              : false
-# BinPackParameters                         : false
-# BreakBeforeBraces                         : Allman
-# BreakBeforeTernaryOperators               : false
-# BreakConstructorInitializersBeforeComma   : true
-# ColumnLimit                               : 120 
-# Cpp11BracedListStyle                      : true
-# DerivePointerAlignment                    : true
-# DerivePointerBinding                      : false
-IndentWidth                               : 4
-# KeepEmptyLinesAtTheStartOfBlocks          : true
-MaxEmptyLinesToKeep                       : 2
-# NamespaceIndentation                      : All 
-PointerBindsToType                        : true
-# SpacesBeforeTrailingComments              : 1
-# SpacesInAngles                            : false
-# SpacesInSquareBrackets                    : false
-TabWidth                                  : 4
-UseTab                                    : ForIndentation
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
+# Language and base style
+Language: Cpp
+BasedOnStyle: Google
+Standard: Latest
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+ContinuationIndentWidth: 8
+
+# Access modifiers (public/private/protected)
+AccessModifierOffset: -4
+
+# Line length
+ColumnLimit: 100
+
+# Short statements
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+
+# Braces
+BreakBeforeBraces: Attach
+
+# Pointer alignment
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+# Spacing
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Comments
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 2
+
+# Empty lines
+MaxEmptyLinesToKeep: 2
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+
+# Naming / readability helpers
+NamespaceIndentation: None
+FixNamespaceComments: true
+
+# Wrapping
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AlignAfterOpenBracket: BlockIndent
+BinPackParameters: false
+BinPackArguments: false
+PenaltyBreakBeforeFirstCallParameter: 2000
+
+# Misc
+ReflowComments: true
+IndentCaseLabels: true

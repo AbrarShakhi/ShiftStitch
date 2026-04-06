@@ -6,7 +6,7 @@
 namespace shiftstitch {
 
 class ISticher {
-   public:
+public:
 	virtual cv::Mat stitch(std::vector<cv::Mat>& images) = 0;
 };
 
