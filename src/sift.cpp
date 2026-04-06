@@ -3,6 +3,7 @@
 #include <iostream>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/opencv.hpp>
+#include <stdexcept>
 #include <vector>
 
 namespace shiftstitch {
@@ -29,7 +30,7 @@ cv::Mat SIFT::warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv:
 
 cv::Mat SIFT::stitch(std::vector<cv::Mat>& images) {
 	if (images.empty()) {
-		return cv::Mat();
+		throw std::runtime_error("Empty images provided");
 	}
 	if (images.size() == 1) {
 		return images[0];
