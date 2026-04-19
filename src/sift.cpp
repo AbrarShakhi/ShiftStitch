@@ -10,10 +10,21 @@ namespace shiftstitch {
 
 void SIFT::detectFeatures(
         const cv::Mat& img, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors
-) {}
+) {
+	cv::Mat gray;
+
+	if (img.channels() == 3)
+		cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+	else
+		gray = img;
+
+	auto sift = cv::SIFT::create();
+	sift->detectAndCompute(gray, cv::noArray(), keypoints, descriptors);
+}
 
 std::vector<cv::DMatch> SIFT::matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2) {
-	return std::vector<cv::DMatch>();
+	std::vector<cv::DMatch> goodMatches;
+	return goodMatches;
 }
 
 cv::Mat SIFT::computeHomography(
@@ -21,11 +32,25 @@ cv::Mat SIFT::computeHomography(
         const std::vector<cv::KeyPoint>& kp2,
         const std::vector<cv::DMatch>& matches
 ) {
-	return cv::Mat();
+	if (matches.size() < 4)
+		return cv::Mat();
+
+	std::vector<cv::Point2f> pts1, pts2;
+
+	for (const auto& m : matches) {
+		pts1.push_back(kp1[m.queryIdx].pt);
+		pts2.push_back(kp2[m.trainIdx].pt);
+	}
+
+	cv::Mat mask;
+	cv::Mat H = cv::findHomography(pts2, pts1, cv::RANSAC, 4.0, mask);
+
+	return H;
 }
 
 cv::Mat SIFT::warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H) {
-	return cv::Mat();
+	cv::Mat result;
+	return result;
 }
 
 cv::Mat SIFT::stitch(std::vector<cv::Mat>& images) {
