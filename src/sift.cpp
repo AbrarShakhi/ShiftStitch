@@ -10,7 +10,17 @@ namespace shiftstitch {
 
 void SIFT::detectFeatures(
         const cv::Mat& img, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors
-) {}
+) {
+	cv::Mat gray;
+
+    if (img.channels() == 3)
+        cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+    else
+        gray = img;
+
+    auto sift = cv::SIFT::create();
+    sift->detectAndCompute(gray, cv::noArray(), keypoints, descriptors);
+}
 
 std::vector<cv::DMatch> SIFT::matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2) {
 	return std::vector<cv::DMatch>();
