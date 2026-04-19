@@ -31,7 +31,20 @@ cv::Mat SIFT::computeHomography(
         const std::vector<cv::KeyPoint>& kp2,
         const std::vector<cv::DMatch>& matches
 ) {
-	return cv::Mat();
+	if (matches.size() < 4)
+        return cv::Mat();
+
+    std::vector<cv::Point2f> pts1, pts2;
+
+    for (const auto& m : matches) {
+        pts1.push_back(kp1[m.queryIdx].pt);
+        pts2.push_back(kp2[m.trainIdx].pt);
+    }
+
+    cv::Mat mask;
+    cv::Mat H = cv::findHomography(pts2, pts1, cv::RANSAC, 4.0, mask);
+
+    return H;
 }
 
 cv::Mat SIFT::warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H) {
