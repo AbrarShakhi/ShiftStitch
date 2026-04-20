@@ -11,6 +11,8 @@ namespace shiftstitch {
 enum class ErrorCode {
 	ImageLoadFailed,
 	NoImagesProvided,
+	FeatureSelectionFailed,
+	EmptyDescriptors,
 	NotEnoughMatches,
 	HomographyFailed,
 	WarpFailed,
