@@ -23,7 +23,26 @@ void SIFT::detectFeatures(
 }
 
 std::vector<cv::DMatch> SIFT::matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2) {
+	std::vector<std::vector<cv::DMatch>> knnMatches;
 	std::vector<cv::DMatch> goodMatches;
+
+	if (desc1.empty() || desc2.empty())
+		return goodMatches;
+
+	cv::BFMatcher matcher(cv::NORM_L2);
+	matcher.knnMatch(desc1, desc2, knnMatches, 2);
+
+	const float ratioThresh = 0.75f;
+
+	for (const auto& m : knnMatches) {
+		if (m.size() < 2)
+			continue;
+
+		if (m[0].distance < ratioThresh * m[1].distance) {
+			goodMatches.push_back(m[0]);
+		}
+	}
+
 	return goodMatches;
 }
 
@@ -49,7 +68,34 @@ cv::Mat SIFT::computeHomography(
 }
 
 cv::Mat SIFT::warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H) {
+	std::vector<cv::Point2f> corners =
+	        {{0, 0},
+	         {(float)newImg.cols, 0},
+	         {(float)newImg.cols, (float)newImg.rows},
+	         {0, (float)newImg.rows}};
+
+	std::vector<cv::Point2f> warpedCorners;
+	cv::perspectiveTransform(corners, warpedCorners, H);
+
+	float minX = 0, minY = 0, maxX = base.cols, maxY = base.rows;
+
+	for (auto& p : warpedCorners) {
+		minX = std::min(minX, p.x);
+		minY = std::min(minY, p.y);
+		maxX = std::max(maxX, p.x);
+		maxY = std::max(maxY, p.y);
+	}
+
+	cv::Mat T = (cv::Mat_<double>(3, 3) << 1, 0, -minX, 0, 1, -minY, 0, 0, 1);
+
 	cv::Mat result;
+
+	cv::warpPerspective(newImg, result, T * H, cv::Size((int)(maxX - minX), (int)(maxY - minY)));
+
+	cv::Mat roi(result, cv::Rect(-minX, -minY, base.cols, base.rows));
+
+	base.copyTo(roi);
+
 	return result;
 }
 
