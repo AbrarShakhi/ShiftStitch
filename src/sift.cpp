@@ -1,58 +1,63 @@
 #include "shiftstitch/sift.hpp"
 
-#include <iostream>
-#include <opencv2/core/mat.hpp>
-#include <opencv2/opencv.hpp>
-#include <stdexcept>
-#include <vector>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+
 
 namespace shiftstitch {
 
-void SIFT::detectFeatures(
+Result<void> SIFT::detectFeatures(
         const cv::Mat& img, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors
-) {
-	cv::Mat gray;
-
-	if (img.channels() == 3)
-		cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
-	else
-		gray = img;
+) const {
+	if (img.empty())
+		return Result<void>::Err({ErrorCode::ImageLoadFailed, "detectFeatures: empty image"});
 
 	auto sift = cv::SIFT::create();
-	sift->detectAndCompute(gray, cv::noArray(), keypoints, descriptors);
+	sift->detectAndCompute(img, cv::noArray(), keypoints, descriptors);
+
+	if (keypoints.empty() || descriptors.empty())
+		return Result<void>::Err({ErrorCode::FeatureSelectionFailed, "No features detected"});
+
+	return Result<void>::Ok();
 }
 
-std::vector<cv::DMatch> SIFT::matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2) {
-	std::vector<std::vector<cv::DMatch>> knnMatches;
-	std::vector<cv::DMatch> goodMatches;
-
+Result<std::vector<cv::DMatch>> SIFT::matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2)
+        const {
 	if (desc1.empty() || desc2.empty())
-		return goodMatches;
+		return Result<std::vector<cv::DMatch>>::Err(
+		        {ErrorCode::EmptyDescriptors, "Empty descriptors"}
+		);
 
 	cv::BFMatcher matcher(cv::NORM_L2);
+	std::vector<std::vector<cv::DMatch>> knnMatches;
 	matcher.knnMatch(desc1, desc2, knnMatches, 2);
 
-	const float ratioThresh = 0.75f;
+	const float ratio_thresh = 0.75f;
+	std::vector<cv::DMatch> goodMatches;
 
 	for (const auto& m : knnMatches) {
 		if (m.size() < 2)
 			continue;
-
-		if (m[0].distance < ratioThresh * m[1].distance) {
+		if (m[0].distance < ratio_thresh * m[1].distance)
 			goodMatches.push_back(m[0]);
-		}
 	}
 
-	return goodMatches;
+	if (goodMatches.size() < 4)
+		return Result<std::vector<cv::DMatch>>::Err(
+		        {ErrorCode::NotEnoughMatches, "Not enough good matches"}
+		);
+
+	return Result<std::vector<cv::DMatch>>::Ok(std::move(goodMatches));
 }
 
-cv::Mat SIFT::computeHomography(
+Result<cv::Mat> SIFT::computeHomography(
         const std::vector<cv::KeyPoint>& kp1,
         const std::vector<cv::KeyPoint>& kp2,
         const std::vector<cv::DMatch>& matches
-) {
+) const {
 	if (matches.size() < 4)
-		return cv::Mat();
+		return Result<cv::Mat>::Err({ErrorCode::NotEnoughMatches, "Not enough matches"});
 
 	std::vector<cv::Point2f> pts1, pts2;
 
@@ -61,85 +66,62 @@ cv::Mat SIFT::computeHomography(
 		pts2.push_back(kp2[m.trainIdx].pt);
 	}
 
-	cv::Mat mask;
-	cv::Mat H = cv::findHomography(pts2, pts1, cv::RANSAC, 4.0, mask);
+	cv::Mat H = cv::findHomography(pts2, pts1, cv::RANSAC);
 
-	return H;
+	if (H.empty())
+		return Result<cv::Mat>::Err({ErrorCode::HomographyFailed, "findHomography failed"});
+
+	return Result<cv::Mat>::Ok(H);
 }
 
-cv::Mat SIFT::warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H) {
-	std::vector<cv::Point2f> corners =
-	        {{0, 0},
-	         {(float)newImg.cols, 0},
-	         {(float)newImg.cols, (float)newImg.rows},
-	         {0, (float)newImg.rows}};
+Result<cv::Mat> SIFT::warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H)
+        const {
+	if (base.empty() || newImg.empty() || H.empty())
+		return Result<cv::Mat>::Err({ErrorCode::WarpFailed, "Invalid input to warpAndBlend"});
 
-	std::vector<cv::Point2f> warpedCorners;
-	cv::perspectiveTransform(corners, warpedCorners, H);
+	cv::Mat warped;
+	cv::warpPerspective(newImg, warped, H, cv::Size(base.cols + newImg.cols, base.rows));
 
-	float minX = 0, minY = 0, maxX = base.cols, maxY = base.rows;
+	cv::Mat result = warped.clone();
+	base.copyTo(result(cv::Rect(0, 0, base.cols, base.rows)));
 
-	for (auto& p : warpedCorners) {
-		minX = std::min(minX, p.x);
-		minY = std::min(minY, p.y);
-		maxX = std::max(maxX, p.x);
-		maxY = std::max(maxY, p.y);
-	}
-
-	cv::Mat T = (cv::Mat_<double>(3, 3) << 1, 0, -minX, 0, 1, -minY, 0, 0, 1);
-
-	cv::Mat result;
-
-	cv::warpPerspective(newImg, result, T * H, cv::Size((int)(maxX - minX), (int)(maxY - minY)));
-
-	cv::Mat roi(result, cv::Rect(-minX, -minY, base.cols, base.rows));
-
-	base.copyTo(roi);
-
-	return result;
+	return Result<cv::Mat>::Ok(result);
 }
 
-cv::Mat SIFT::stitch(std::vector<cv::Mat>& images) {
-	if (images.empty()) {
-		throw std::runtime_error("Empty images provided");
-	}
-	if (images.size() == 1) {
-		return images[0];
-	}
+Result<cv::Mat> SIFT::stitch(std::vector<cv::Mat>& images) {
+	if (images.size() < 2)
+		return Result<cv::Mat>::Err({ErrorCode::NoImagesProvided, "Need at least 2 images"});
 
-	cv::Mat result = images[0];
+	cv::Mat panorama = images[0];
 
-	for (size_t i = 1; i < images.size(); i++) {
-		cv::Mat img = images[i];
-
-		// 1. Detect features
+	for (size_t i = 1; i < images.size(); ++i) {
 		std::vector<cv::KeyPoint> kp1, kp2;
 		cv::Mat desc1, desc2;
 
-		detectFeatures(result, kp1, desc1);
-		detectFeatures(img, kp2, desc2);
+		auto res1 = detectFeatures(panorama, kp1, desc1);
+		if (res1.isErr())
+			return Result<cv::Mat>::Err(res1.error());
 
-		// 2. Match
-		std::vector<cv::DMatch> matches = matchFeatures(desc1, desc2);
+		auto res2 = detectFeatures(images[i], kp2, desc2);
+		if (res2.isErr())
+			return Result<cv::Mat>::Err(res2.error());
 
-		if (matches.size() < 10) {
-			std::cerr << "Not enough matches!" << std::endl;
-			continue;
-		}
+		auto matchRes = matchFeatures(desc1, desc2);
+		if (matchRes.isErr())
+			return Result<cv::Mat>::Err(matchRes.error());
 
-		// 3. Homography
-		cv::Mat H = computeHomography(kp1, kp2, matches);
+		auto Hres = computeHomography(kp1, kp2, matchRes.value());
+		if (Hres.isErr())
+			return Result<cv::Mat>::Err(Hres.error());
 
-		if (H.empty()) {
-			std::cerr << "Homography failed!" << std::endl;
-			continue;
-		}
+		auto warpRes = warpAndBlend(panorama, images[i], Hres.value());
+		if (warpRes.isErr())
+			return Result<cv::Mat>::Err(warpRes.error());
 
-		// 4. Warp + Blend
-		result = warpAndBlend(result, img, H);
+		panorama = warpRes.value();
 	}
 
-	return result;
+	return Result<cv::Mat>::Ok(panorama);
 }
 
 }  // namespace shiftstitch
