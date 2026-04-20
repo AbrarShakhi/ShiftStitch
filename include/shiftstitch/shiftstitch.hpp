@@ -3,32 +3,33 @@
 #include <cstddef>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
+#include <string>
 #include <vector>
 
 #include "shiftstitch/istitcher.hpp"
+#include "shiftstitch/result.hpp"
 
 namespace shiftstitch {
 
 class ShiftStitcher {
-private:
-	std::vector<cv::Mat> images_mats;
-	cv::Mat panorama;
-	bool panorama_created;
-
 public:
-	ShiftStitcher(std::vector<std::string>&);
-	ShiftStitcher(std::string[], std::size_t);
-	~ShiftStitcher() = default;
+	static Result<ShiftStitcher> create(const std::vector<std::string>& image_paths);
+	static Result<ShiftStitcher> create(const std::string image_paths[], std::size_t size);
 
-	void createPanorama(ISticher& sticherAlgorithm);
-
-
-	cv::Mat toCvMat();
-	void savePanorama(std::string);
+	Result<void> createPanorama(IStitcher& algorithm);
+	Result<cv::Mat> toCvMat() const;
+	Result<void> savePanorama(const std::string& output_path) const;
 
 private:
-	template <typename It>
-	std::vector<cv::Mat> loadImages(It, It);
+	ShiftStitcher() = default;
+
+	static Result<std::vector<cv::Mat>> loadImages(
+	        const std::string* first, const std::string* last
+	);
+
+	std::vector<cv::Mat> images_mats_;
+	cv::Mat panorama_;
+	bool panorama_created_ = false;
 };
 
 }  // namespace shiftstitch

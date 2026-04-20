@@ -1,30 +1,32 @@
 #pragma once
 
-#include "shiftstitch/istitcher.hpp"
+#include <opencv2/core/mat.hpp>
+#include <opencv2/features2d.hpp>
+#include <vector>
+
+#include "istitcher.hpp"
+#include "result.hpp"
 
 namespace shiftstitch {
 
-/**
- * Scale-Invariant Feature Transform (SIFT)
- */
-class SIFT : public ISticher {
+class SIFT : public IStitcher {
 public:
-	cv::Mat stitch(std::vector<cv::Mat>&) override;
-
-private:
-	void detectFeatures(
+	Result<void> detectFeatures(
 	        const cv::Mat& img, std::vector<cv::KeyPoint>& keypoints, cv::Mat& descriptors
-	);
+	) const;
 
-	std::vector<cv::DMatch> matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2);
+	Result<std::vector<cv::DMatch>> matchFeatures(const cv::Mat& desc1, const cv::Mat& desc2) const;
 
-	cv::Mat computeHomography(
+	Result<cv::Mat> computeHomography(
 	        const std::vector<cv::KeyPoint>& kp1,
 	        const std::vector<cv::KeyPoint>& kp2,
 	        const std::vector<cv::DMatch>& matches
-	);
+	) const;
 
-	cv::Mat warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H);
+	Result<cv::Mat> warpAndBlend(const cv::Mat& base, const cv::Mat& newImg, const cv::Mat& H)
+	        const;
+
+	Result<cv::Mat> stitch(std::vector<cv::Mat>& images) override;
 };
 
 }  // namespace shiftstitch
