@@ -29,6 +29,7 @@ private:
 
 	std::vector<cv::Mat> images_mats_;
 	cv::Mat panorama_;
+	cv::Mat aux_;
 	bool panorama_created_ = false;
 };
 

@@ -79,6 +79,8 @@ Result<void> ShiftStitcher::createPanorama(IStitcher& algorithm) {
 
 	auto [panorama, aux] = stitch_result.value();
 	panorama_ = panorama;
+	aux_ = aux;
+
 	panorama_created_ = true;
 	return Result<void>::Ok();
 }
@@ -104,6 +106,10 @@ Result<void> ShiftStitcher::savePanorama(const std::string& output_path) const {
 	std::cout << "Writing to: " << output_path << '\n';
 
 	if (!cv::imwrite(output_path, panorama_))
+		return Result<void>::Err(
+		        {ErrorCode::SaveFailed, "savePanorama: cv::imwrite failed for path: " + output_path}
+		);
+	if (!cv::imwrite("map_" + output_path, aux_))
 		return Result<void>::Err(
 		        {ErrorCode::SaveFailed, "savePanorama: cv::imwrite failed for path: " + output_path}
 		);
