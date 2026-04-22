@@ -1,6 +1,7 @@
 #include "shiftstitch/shiftstitch.hpp"
 
 #include <iostream>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <string>
@@ -50,9 +51,26 @@ Result<void> ShiftStitcher::createPanorama(IStitcher& algorithm) {
 	if (images_mats_.empty())
 		return Result<void>::Err({ErrorCode::NoImagesProvided, "createPanorama: no images loaded"});
 
-	auto stitchResult = algorithm.stitch(images_mats_);
-	if (stitchResult.isErr())
-		return Result<void>::Err(stitchResult.error());
+	if (images_mats_.size() < 2)
+		return Result<void>::Err({ErrorCode::NoImagesProvided, "Need at least 2 images"});
+
+	while (images_mats_.size() > 2) {
+		auto stitchResult = algorithm
+		                            .stitch(images_mats_[images_mats_.size() - 2],
+		                                    images_mats_[images_mats_.size() - 1]);
+		if (stitchResult.isErr())
+			return Result<void>::Err(stitchResult.error());
+		cv::Mat resultImg = stitchResult.value();
+		cv::Mat result8u;
+		resultImg.convertTo(result_8u, CV_8UC3);
+
+		images_mats_[images_mats_.size() - 2] = std::move(result_8u);
+		images_mats_.pop_back();
+	}
+
+	std::tie(result, aux) = algorithm.stitch(images[0], images[1]);
+	//
+
 
 	panorama_ = stitchResult.value();
 	panorama_created_ = true;
