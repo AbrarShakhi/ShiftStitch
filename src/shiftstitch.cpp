@@ -27,9 +27,13 @@ Result<std::vector<cv::Mat>> ShiftStitcher::loadImages(
 	return Result<std::vector<cv::Mat>>::Ok(std::move(mats));
 }
 
+
+
 Result<ShiftStitcher> ShiftStitcher::create(const std::vector<std::string>& image_paths) {
 	return create(image_paths.data(), image_paths.size());
 }
+
+
 
 Result<ShiftStitcher> ShiftStitcher::create(const std::string image_paths[], std::size_t size) {
 	if (size == 0)
@@ -45,6 +49,8 @@ Result<ShiftStitcher> ShiftStitcher::create(const std::string image_paths[], std
 	s.images_mats_ = std::move(loadResult.value());
 	return Result<ShiftStitcher>::Ok(std::move(s));
 }
+
+
 
 Result<void> ShiftStitcher::createPanorama(IStitcher& algorithm) {
 	if (images_mats_.empty())
@@ -77,6 +83,8 @@ Result<void> ShiftStitcher::createPanorama(IStitcher& algorithm) {
 	return Result<void>::Ok();
 }
 
+
+
 Result<cv::Mat> ShiftStitcher::toCvMat() const {
 	if (!panorama_created_)
 		return Result<cv::Mat>::Err(
@@ -84,6 +92,8 @@ Result<cv::Mat> ShiftStitcher::toCvMat() const {
 		);
 	return Result<cv::Mat>::Ok(panorama_);
 }
+
+
 
 Result<void> ShiftStitcher::savePanorama(const std::string& output_path) const {
 	if (!panorama_created_)
