@@ -87,7 +87,7 @@ void SIFT::calculateWindowSize(const cv::Mat& query_photo, const cv::Mat& train_
 
 std::pair<cv::Mat, cv::Mat> SIFT::giveGray(const cv::Mat& image) const {
 	cv::Mat gray;
-	cv::cvtColor(image, gray, cv::COLOR_RGB2GRAY);
+	cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 	return {image, gray};
 }
 
