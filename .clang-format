@@ -1,6 +1,5 @@
-# Language and base style
 Language: Cpp
-BasedOnStyle: Google
+BasedOnStyle: Microsoft
 Standard: Latest
 
 # Indentation
@@ -9,7 +8,7 @@ TabWidth: 4
 UseTab: ForIndentation
 ContinuationIndentWidth: 8
 
-# Access modifiers (public/private/protected)
+# Access modifiers
 AccessModifierOffset: -4
 
 # Line length
@@ -20,7 +19,7 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
 
-# Braces
+# Braces (VS uses Allman style)
 BreakBeforeBraces: Attach
 
 # Pointer alignment

@@ -1,13 +1,13 @@
 #pragma once
 
+#include "shiftstitch/istitcher.hpp"
+#include "shiftstitch/result.hpp"
+
 #include <cstddef>
 #include <opencv2/core.hpp>
 #include <opencv2/core/mat.hpp>
 #include <string>
 #include <vector>
-
-#include "shiftstitch/istitcher.hpp"
-#include "shiftstitch/result.hpp"
 
 namespace shiftstitch {
 

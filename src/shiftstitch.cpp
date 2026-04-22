@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-
 namespace shiftstitch {
 
 Result<std::vector<cv::Mat>> ShiftStitcher::loadImages(
@@ -55,24 +54,25 @@ Result<void> ShiftStitcher::createPanorama(IStitcher& algorithm) {
 		return Result<void>::Err({ErrorCode::NoImagesProvided, "Need at least 2 images"});
 
 	while (images_mats_.size() > 2) {
-		auto stitchResult = algorithm
-		                            .stitch(images_mats_[images_mats_.size() - 2],
-		                                    images_mats_[images_mats_.size() - 1]);
-		if (stitchResult.isErr())
-			return Result<void>::Err(stitchResult.error());
-		cv::Mat resultImg = stitchResult.value();
-		cv::Mat result8u;
-		resultImg.convertTo(result_8u, CV_8UC3);
+		auto stitch_result = algorithm
+		                             .stitch(images_mats_[images_mats_.size() - 2],
+		                                     images_mats_[images_mats_.size() - 1]);
+		if (stitch_result.isErr())
+			return Result<void>::Err(stitch_result.error());
+
+		cv::Mat result_8u;
+		stitch_result.value().first.convertTo(result_8u, CV_8UC3);
 
 		images_mats_[images_mats_.size() - 2] = std::move(result_8u);
 		images_mats_.pop_back();
 	}
 
-	std::tie(result, aux) = algorithm.stitch(images[0], images[1]);
-	//
+	auto stitch_result = algorithm.stitch(images_mats_[0], images_mats_[1]);
+	if (stitch_result.isErr())
+		return Result<void>::Err(stitch_result.error());
 
-
-	panorama_ = stitchResult.value();
+	auto [panorama, aux] = stitch_result.value();
+	panorama_ = panorama;
 	panorama_created_ = true;
 	return Result<void>::Ok();
 }

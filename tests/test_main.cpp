@@ -1,6 +1,6 @@
-#include <cassert>
-
 #include "shiftstitch/shiftstitch.hpp"
+
+#include <cassert>
 
 int main() {
 	// Minimal test

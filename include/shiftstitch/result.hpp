@@ -32,8 +32,7 @@ struct StitchError {
 // ---------------------------------------------------------------------------
 // Result<T>
 // ---------------------------------------------------------------------------
-template <typename T>
-class Result {
+template <typename T> class Result {
 public:
 	static Result Ok(T value) {
 		return Result(std::move(value));
@@ -75,8 +74,7 @@ public:
 		return isOk() ? std::get<T>(data_) : std::move(fallback);
 	}
 
-	template <typename F>
-	auto map(F&& f) -> Result<decltype(f(std::declval<T>()))> {
+	template <typename F> auto map(F&& f) -> Result<decltype(f(std::declval<T>()))> {
 		using U = decltype(f(std::declval<T>()));
 		if (isErr())
 			return Result<U>::Err(error());
@@ -93,8 +91,7 @@ private:
 // ---------------------------------------------------------------------------
 // Result<void>
 // ---------------------------------------------------------------------------
-template <>
-class Result<void> {
+template <> class Result<void> {
 public:
 	static Result Ok();
 	static Result Err(StitchError error);

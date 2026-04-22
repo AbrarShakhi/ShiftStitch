@@ -1,10 +1,10 @@
+#include "shiftstitch/shiftstitch.hpp"
+#include "shiftstitch/sift.hpp"
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include "shiftstitch/shiftstitch.hpp"
-#include "shiftstitch/sift.hpp"
 
 using namespace shiftstitch;
 
