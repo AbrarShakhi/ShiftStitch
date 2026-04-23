@@ -49,7 +49,7 @@ python3 scripts/build_linux.py
 #### 3. Run the example
 
 ```bash
-./build/example_basic
+./build/example_basic img1.jpg img2.jpg ... outputfilename
 
 # LD_LIBRARY_PATH=. ./example_basic
 ```
@@ -79,7 +79,7 @@ python3 scripts/build_linux.py
 #### 3. Run
 
 ```bash
-./example_basic
+./build/example_basic img1.jpg img2.jpg ... outputfilename
 ```
 
 ---
@@ -110,7 +110,7 @@ cmake --build . --config Release
 Make sure `ShiftStitch.dll` and OpenCV DLLs are in the same folder:
 
 ```bash
-example_basic.exe
+build\example_basic.exe img1.jpg img2.jpg ... outputfilename
 ```
 
 ---
