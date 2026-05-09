@@ -14,6 +14,53 @@
 
 ---
 
+## Demo
+
+## Results
+
+### Input Images
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/red/1.jpeg" alt="Input Image 1" width="250"/>
+      <br/>
+      <sub><b>Image 1</b></sub>
+    </td>
+    <td align="center">
+      <img src="images/red/2.jpeg" alt="Input Image 2" width="250"/>
+      <br/>
+      <sub><b>Image 2</b></sub>
+    </td>
+    <td align="center">
+      <img src="images/red/3.jpeg" alt="Input Image 3" width="250"/>
+      <br/>
+      <sub><b>Image 3</b></sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+### Panorama Stitching Output
+
+<div align="center">
+
+#### Final Panorama
+
+<img src="output/output.jpg" alt="Panorama Output" width="800"/>
+
+<br/><br/>
+
+#### Feature Matching / Mapping Visualization
+
+<img src="output/map_output.jpg" alt="Feature Matching Output" width="800"/>
+
+</div>
+
+
+---
+
 ## Requirements
 
 * CMake ≥ 3.16
@@ -53,6 +100,7 @@ python3 scripts/build_linux.py
 
 # LD_LIBRARY_PATH=. ./example_basic
 ```
+> last filename will be considered as output filename
 
 ---
 
