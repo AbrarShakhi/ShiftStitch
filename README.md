@@ -258,6 +258,6 @@ Pull requests and issues are welcome!
 
 ## Author
 
-- A1
-- A2
-- A3
+- [AbrarShakhi](https://github.com/AbrarShakhi)
+- [srabustynasrinsojja](https://github.com/srabustynasrinsojja)
+- Ani Paul
